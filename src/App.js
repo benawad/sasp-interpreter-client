@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
 import '../semantic/dist/semantic.min.css'
 import fetch from 'isomorphic-fetch';
 import Dropzone from 'react-dropzone';
 import request from 'superagent';
+import './App.css';
 
 class MyDropZone extends Component {
 
 
     constructor(props) {
       super(props);
+      this.onDrop = this.onDrop.bind(this);
     }
 
     onDrop (acceptedFiles, rejectedFiles) {
@@ -20,6 +21,7 @@ class MyDropZone extends Component {
           .post("http://localhost:3000/sample/upload")
           .send({text: res.text})
           .end((err, res) => {
+            this.props.upsucc(acceptedFiles[0].name);
             console.log(res);
             console.log(err);
           })
@@ -42,10 +44,11 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: '', output: []};
+    this.state = {value: '', output: [], fileupload: false, fname: ""};
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.keyPress = this.keyPress.bind(this);
+    this.uploadSuccess = this.uploadSuccess.bind(this);
   }
 
   handleChange(event) {
@@ -97,11 +100,19 @@ class App extends Component {
     }
   }
 
+  uploadSuccess(name) {
+    this.setState({fileupload: true, fname: name});
+  }
+
   render() {
     return (
       <div>
         
-        <MyDropZone />
+        <MyDropZone upsucc={this.uploadSuccess} />
+
+        <div className={(this.state.fileupload ? "" : "hidden") + " ui inverted progress success"}>
+          <div className="label">{this.state.fname} uploaded successfully!</div>
+        </div>
 
         <div className="ui labeled input fluid">
           <div className="ui label">?-</div>
