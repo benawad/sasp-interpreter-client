@@ -32,7 +32,7 @@ class App extends Component {
   }
 
   request(query) {
-    const url = "http://localhost:3000/sample/query";
+    const url = "http://192.168.0.109/:3000/sample/query";
 
     return fetch(url, {
       method: 'POST',
