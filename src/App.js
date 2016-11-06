@@ -55,43 +55,18 @@ class App extends Component {
     this.setState({value: event.target.value});
   }
 
-  checkStatus(response) {
-    return new Promise((resolve, reject) => {
-      if (response.status >= 200 && response.status < 300) {
-        resolve(response);
-      } else {
-        return response.json().then((error) => {
-          reject(new Error(error.message || error.name));
-        });        
-      }
-    });
-  }
-
-  request(query) {
+  handleSubmit() {
     const url = "http://localhost:3000/sample/query";
 
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({"query": query})
-    }).then(this.checkStatus)
-      .then((response) => {
-        return response.json();
-      });
-  }
-
-  handleSubmit() {
-    this.request(this.state.value).then(
-      (data) => {
-        console.log(data)
+    request
+      .post(url)
+      .send({"query": this.state.value})
+      .end((err, resp) => {
+        const data = JSON.parse(resp.text);
         const outputs = this.state.output.slice();
         outputs.unshift([this.state.value, data.output, data.success]);
         this.setState({value: "", output: outputs});
-      } 
-    )
+      })
   }
 
   keyPress(e) {
