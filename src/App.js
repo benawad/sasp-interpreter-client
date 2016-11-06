@@ -3,6 +3,39 @@ import logo from './logo.svg';
 import './App.css';
 import '../semantic/dist/semantic.min.css'
 import fetch from 'isomorphic-fetch';
+import Dropzone from 'react-dropzone';
+import request from 'superagent';
+
+class MyDropZone extends Component {
+
+
+    constructor(props) {
+      super(props);
+    }
+
+    onDrop (acceptedFiles, rejectedFiles) {
+      const url = acceptedFiles[0].preview;
+      request.get(url).end((err, res) => {
+        request
+          .post("http://localhost:3000/sample/upload")
+          .send({text: res.text})
+          .end((err, res) => {
+            console.log(res);
+            console.log(err);
+          })
+      });
+    }
+
+    render () {
+      return (
+          <div className="fileupload" >
+            <Dropzone multiple={false} onDrop={this.onDrop}>
+              <div>Upload your Sasp file here</div>
+            </Dropzone>
+          </div>
+      );
+    }
+}
 
 
 class App extends Component {
@@ -32,7 +65,7 @@ class App extends Component {
   }
 
   request(query) {
-    const url = "http://192.168.0.109:3000/sample/query";
+    const url = "http://localhost:3000/sample/query";
 
     return fetch(url, {
       method: 'POST',
@@ -67,12 +100,15 @@ class App extends Component {
   render() {
     return (
       <div>
+        
+        <MyDropZone />
+
         <div className="ui labeled input fluid">
           <div className="ui label">?-</div>
           <input onKeyPress={this.keyPress} value={this.state.value} onChange={this.handleChange} type="text" />
         </div>  
           {this.state.output.map((x, i) =>
-            <div key={i} className="ui cards fluid">
+            <div key={i} className="ui cards">
               <div className={(x[2] ? 'green' : 'red') + " card fluid"}>
                 <div className="content">
                     <div className="header">{x[0]}</div>
