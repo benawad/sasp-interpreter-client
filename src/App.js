@@ -9,7 +9,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: '', output: ''};
+    this.state = {value: '', output: []};
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -50,7 +50,9 @@ class App extends Component {
     this.request(this.state.value).then(
       (data) => {
         console.log(data)
-        this.setState({output: data.output});
+        const outputs = this.state.output.slice();
+        outputs.push(data.output);
+        this.setState({output: outputs});
       } 
     )
   }
@@ -62,9 +64,11 @@ class App extends Component {
           <input value={this.state.value} onChange={this.handleChange} type="text" placeholder="Search..."/>
           <div onClick={this.handleSubmit} className="ui button">Search</div>
         </div>  
-        <div className="ui visible message">
-          <p>{this.state.output}</p>
-        </div>
+        {this.state.output.map((x) =>
+          <div className="ui visible message">
+            <p>{x}</p>
+          </div>
+        )}
       </div>
     );
   }
