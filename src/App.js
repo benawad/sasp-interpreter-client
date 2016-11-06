@@ -52,7 +52,7 @@ class App extends Component {
       (data) => {
         console.log(data)
         const outputs = this.state.output.slice();
-        outputs.unshift([this.state.value, data.output]);
+        outputs.unshift([this.state.value, data.output, data.success]);
         this.setState({value: "", output: outputs});
       } 
     )
@@ -71,16 +71,16 @@ class App extends Component {
           <div className="ui label">?-</div>
           <input onKeyPress={this.keyPress} value={this.state.value} onChange={this.handleChange} type="text" />
         </div>  
-        {this.state.output.map((x, i) =>
-          <div>
-            <div key="a{i}" className="ui visible message">
-              <p>{x[0]}</p>
+          {this.state.output.map((x, i) =>
+            <div key={i} className="ui cards fluid">
+              <div className={(x[2] ? 'green' : 'red') + " card fluid"}>
+                <div className="content">
+                    <div className="header">{x[0]}</div>
+                    <div className="description"><p>{x[1]}</p></div>
+                </div>
+              </div>
             </div>
-            <div key="b{i}" className="ui visible message">
-              <p>{x[1]}</p>
-            </div>
-          </div>
-        )}
+          )}
       </div>
     );
   }
