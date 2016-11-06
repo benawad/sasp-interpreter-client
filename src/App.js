@@ -12,6 +12,7 @@ class App extends Component {
     this.state = {value: '', output: []};
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.keyPress = this.keyPress.bind(this);
   }
 
   handleChange(event) {
@@ -46,26 +47,32 @@ class App extends Component {
       });
   }
 
-  handleSubmit(event) {
+  handleSubmit() {
     this.request(this.state.value).then(
       (data) => {
         console.log(data)
         const outputs = this.state.output.slice();
         outputs.push(data.output);
-        this.setState({output: outputs});
+        this.setState({value: "", output: outputs});
       } 
     )
+  }
+
+  keyPress(e) {
+    if (e.key === 'Enter') {
+      this.handleSubmit();
+    }
   }
 
   render() {
     return (
       <div>
-        <div className="ui fluid action input">
-          <input value={this.state.value} onChange={this.handleChange} type="text" placeholder="Search..."/>
-          <div onClick={this.handleSubmit} className="ui button">Search</div>
+        <div className="ui labeled input fluid">
+          <div className="ui label">?-</div>
+          <input onKeyPress={this.keyPress} value={this.state.value} onChange={this.handleChange} type="text" />
         </div>  
-        {this.state.output.map((x) =>
-          <div className="ui visible message">
+        {this.state.output.map((x, i) =>
+          <div key={i} className="ui visible message">
             <p>{x}</p>
           </div>
         )}
