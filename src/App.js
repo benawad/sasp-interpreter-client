@@ -18,7 +18,7 @@ class MyDropZone extends Component {
       const url = acceptedFiles[0].preview;
       request.get(url).end((err, res) => {
         request
-          .post("http://localhost:3000/sample/upload")
+          .post("http://localhost:3000/"+this.props.pname+"/upload")
           .send({text: res.text})
           .end((err, res) => {
             this.props.upsucc(acceptedFiles[0].name);
@@ -44,8 +44,9 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: '', output: [], fileupload: false, fname: ""};
+    this.state = {value: '', output: [], fileupload: false, fname: "", pname: ""};
     this.handleChange = this.handleChange.bind(this);
+    this.handlePName = this.handlePName.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.keyPress = this.keyPress.bind(this);
     this.uploadSuccess = this.uploadSuccess.bind(this);
@@ -56,7 +57,7 @@ class App extends Component {
   }
 
   handleSubmit() {
-    const url = "http://localhost:3000/sample/query";
+    const url = "http://localhost:3000/"+this.state.pname+"/query";
 
     request
       .post(url)
@@ -76,7 +77,7 @@ class App extends Component {
   }
 
   handlePName(e) {
-    this.setState({project: e.target.value});
+    this.setState({pname: e.target.value});
   }
 
   uploadSuccess(name) {
@@ -94,7 +95,7 @@ class App extends Component {
           </div>  
         </div>
         
-        <MyDropZone upsucc={this.uploadSuccess} />
+        <MyDropZone upsucc={this.uploadSuccess} pname={this.state.pname} />
 
         <div className={(this.state.fileupload ? "" : "hidden") + " ui inverted progress success"}>
           <div className="label">{this.state.fname} uploaded successfully!</div>
